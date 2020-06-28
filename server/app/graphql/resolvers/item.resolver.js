@@ -3,7 +3,7 @@ import { createUsingContract, getOrderbyClause, getFilterBy } from '../common';
 
 const ItemResolver = {
   Query: {
-    getItem: (parent, { id }, { models }) => models.Item.findOne({ where: { id } }),
+    getItem: (_, { id }, { models }) => models.Item.findOne({ where: { id } }),
     allItems: (
       parent,
       {

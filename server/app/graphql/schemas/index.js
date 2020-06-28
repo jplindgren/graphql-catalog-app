@@ -1,6 +1,5 @@
 import ItemSchema from './item.schema';
-import MutationSchema from './mutation.schema';
-import QuerySchema from './query.schema';
+import RootSchema from './root.schema';
 import TagSchema from './tag.schema';
 
-export default [ItemSchema, MutationSchema, QuerySchema, TagSchema];
+export default [ItemSchema, RootSchema, TagSchema];
