@@ -18,7 +18,11 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Tag.associate = (models) => {
-    models.Tag.belongsToMany(models.Item, { as: 'items', through: 'Item_Tags' });
+    models.Tag.belongsToMany(models.Item, {
+      as: 'items',
+      through: 'Item_Tags',
+      onDelete: 'NO ACTION',
+    });
   };
   return Tag;
 };

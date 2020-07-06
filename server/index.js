@@ -1,25 +1,35 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import models from './app/models';
-import ItemResolver from './app/graphql/resolvers/item.resolver';
-import TagResolver from './app/graphql/resolvers/tag.resolver';
+import resolvers from './app/graphql/resolvers/index';
 import typeDefs from './app/graphql/schemas';
 import config from './config/config';
+import extractUser from './app/middleware/extractUser';
+import authRouter from './app/auth/auth.controller';
 
 const { sequelize } = models;
 const app = express();
-//app.use(cors('*'));
+
 app.use(cors({ origin: config.app.corsOrigin }));
+app.use(extractUser);
 
 const server = new ApolloServer({
   typeDefs,
-  resolvers: [ItemResolver, TagResolver],
-  context: { models },
+  resolvers,
+  context: (ctx) => ({
+    models,
+    user: ctx.req.user,
+    SECRET: config.app.jwtSecret,
+    REFRESH_SECRET: config.app.jwtRefreshSecret,
+  }),
 });
 server.applyMiddleware({ app });
 
-app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.use('/auth', bodyParser.json(), authRouter);
 
 sequelize.sync({ force: false }).then(() => {
   // eslint-disable-next-line no-console

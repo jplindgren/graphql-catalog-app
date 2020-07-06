@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
       validate: {
         isUrl: {
           args: true,
-          msg: 'Invalid link',
+          msg: 'Invalid link preview',
         },
       },
     },
@@ -52,7 +52,17 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
   Item.associate = (models) => {
-    models.Item.belongsToMany(models.Tag, { as: 'tags', through: 'Item_Tags' });
+    models.Item.belongsTo(models.User, {
+      as: 'owner',
+      foreignKey: {
+        name: 'ownerId',
+        allowNull: false,
+      },
+    });
+    models.Item.belongsToMany(models.Tag, {
+      as: 'tags',
+      through: 'Item_Tags',
+    });
   };
   return Item;
 };

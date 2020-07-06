@@ -34,7 +34,7 @@ export const getOrderbyClause = (order) => {
 };
 
 export const getFilterBy = (filter, models) => {
-  if (!filter) return {};
+  if (!filter) return null;
   if (!filter.op) return { [filter.field]: filter.value };
 
   const op = models.Sequelize.Op[filter.op];

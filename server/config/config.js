@@ -12,6 +12,8 @@ const config = {
   app: {
     port: process.env.PORT || 3000,
     corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    jwtSecret: process.env.JWT_SECRET || 'dasdasdsadasdasdasdas',
+    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET || 'asdavcvxcvxcvadada',
   },
 };
 
