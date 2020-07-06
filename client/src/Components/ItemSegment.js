@@ -1,18 +1,34 @@
 import React, { useState } from 'react';
 import { Segment, Header, Card, Icon, Rail, Button, Transition } from 'semantic-ui-react';
 import Item from './Item';
+import ItemTable from './ItemTable';
 
-//TODO error
 const ItemSegment = ({
-  query: { items = [], loading, error },
+  query: { items = [], loading },
   header,
   color = null,
   raised = false,
   icon = null,
+  viewFormat = 'card',
 }) => {
   const [visible, setVisible] = useState(true);
   const handleVisibiltyToggleClick = () => {
     setVisible(!visible);
+  };
+
+  const viewComponent = () => {
+    if (viewFormat === 'card') {
+      return (
+        <Segment.Inline>
+          <Card.Group itemsPerRow={6}>
+            {items.map((i) => (
+              <Item key={i.id} item={i} />
+            ))}
+          </Card.Group>
+        </Segment.Inline>
+      );
+    }
+    return <ItemTable items={items} />;
   };
   return (
     <Segment color={color} raised={raised} loading={loading}>
@@ -28,13 +44,7 @@ const ItemSegment = ({
         </Button>
       </Rail>
       <Transition transitionOnMount duration={400} divided animation="zoom" visible={visible}>
-        <Segment.Inline>
-          <Card.Group itemsPerRow={6}>
-            {items.map((i) => (
-              <Item key={i.id} item={i} />
-            ))}
-          </Card.Group>
-        </Segment.Inline>
+        {viewComponent()}
       </Transition>
     </Segment>
   );

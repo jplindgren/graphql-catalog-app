@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Header, Icon } from 'semantic-ui-react';
 import ItemSegment from '../Components/ItemSegment';
 import ItemSearch from './ItemSearch';
@@ -6,6 +6,12 @@ import ItemSearch from './ItemSearch';
 const ItemList = ({ query, handleNameChange, handleTagChange, tagsToFilter }) => {
   const header = 'All Items';
   const { data: { allItems = [], allTags = [] } = {}, loading, error } = query;
+  const [viewFormat, setViewFormat] = useState('list');
+
+  const onChangeFormat = (e, { value }) => {
+    e.stopPropagation();
+    setViewFormat(value);
+  };
 
   return (
     <div>
@@ -19,8 +25,9 @@ const ItemList = ({ query, handleNameChange, handleTagChange, tagsToFilter }) =>
         handleNameChange={handleNameChange}
         handleTagChange={handleTagChange}
         tagsToFilter={tagsToFilter}
+        handleChangeFormat={onChangeFormat}
       />
-      <ItemSegment query={{ items: allItems, loading, error }} />
+      <ItemSegment query={{ items: allItems, loading, error }} viewFormat={viewFormat} />
     </div>
   );
 };

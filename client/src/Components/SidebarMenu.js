@@ -1,6 +1,7 @@
 import React from 'react';
 import { Header, Icon, Menu, Sidebar } from 'semantic-ui-react';
 import { withRouter } from 'react-router-dom';
+import { clearToken } from '../utils/tokens';
 
 const SidebarMenu = ({
   history,
@@ -15,6 +16,11 @@ const SidebarMenu = ({
   const handleOnclick = (e, { name }) => {
     const route = routeMap[name];
     history.push(route);
+  };
+
+  const logout = () => {
+    clearToken();
+    history.push('/');
   };
   return (
     <Sidebar as={Menu} animation="overlay" icon="labeled" inverted vertical visible width="thin">
@@ -33,6 +39,10 @@ const SidebarMenu = ({
       <Menu.Item name="tags" as="a" onClick={handleOnclick} active={activeItem === 'tags'}>
         <Icon name="tags" />
         Tags
+      </Menu.Item>
+      <Menu.Item name="logout" as="a" onClick={logout}>
+        <Icon name="power off" size="tiny" inverted />
+        Logout
       </Menu.Item>
     </Sidebar>
   );

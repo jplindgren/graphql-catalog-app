@@ -1,18 +1,31 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import ApolloClient from 'apollo-boost';
-import 'semantic-ui-css/semantic.min.css';
 import { ApolloProvider } from 'react-apollo';
 import * as serviceWorker from './serviceWorker';
 import Routes from './Routes';
+import { ToastContextProvider } from './Contexts/ToastContextProvider';
+
+import 'semantic-ui-css/semantic.min.css';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:3002/graphql',
+  uri: 'http://localhost:3006/graphql',
+  onError: (err) => console.log('geral error handler', err),
+  request: (operation) => {
+    const token = localStorage.getItem('token');
+    operation.setContext({
+      headers: {
+        authorization: token ? `Bearer ${token}` : '',
+      },
+    });
+  },
 });
 
 const App = (
   <ApolloProvider client={client}>
-    <Routes />
+    <ToastContextProvider>
+      <Routes />
+    </ToastContextProvider>
   </ApolloProvider>
 );
 

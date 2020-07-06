@@ -1,11 +1,12 @@
 import React from 'react';
-import { Menu, Input, Dropdown } from 'semantic-ui-react';
+import { Menu, Input, Dropdown, Button, Icon } from 'semantic-ui-react';
 
 const ItemSearch = ({
   query: { allTags = [], loading },
   handleNameChange,
   handleTagChange,
   tagsToFilter = [],
+  handleChangeFormat,
 }) => {
   const handleAddTagFilter = (e, { value }) => {
     handleTagChange(value);
@@ -14,10 +15,10 @@ const ItemSearch = ({
     handleNameChange(value);
   };
 
-  const tagOptions = allTags.map((t) => ({
-    key: t.id,
-    value: t.id,
-    text: t.name,
+  const tagOptions = allTags.map((tag) => ({
+    key: tag.id,
+    value: tag.id,
+    text: tag.name,
   }));
 
   return (
@@ -34,18 +35,28 @@ const ItemSearch = ({
         <Dropdown
           button
           className="icon"
-          floating
           labeled
           multiple
           search
           selection
+          additionPosition="bottom"
+          fluid
           onChange={handleAddTagFilter}
           icon="tags"
           loading={loading}
           options={tagOptions}
           value={tagsToFilter}
-          text="Tags.."
         />
+      </Menu.Item>
+      <Menu.Item position="right">
+        <Button.Group icon>
+          <Button onClick={handleChangeFormat} value="card">
+            <Icon name="grid layout" />
+          </Button>
+          <Button onClick={handleChangeFormat} value="list">
+            <Icon name="list layout" />
+          </Button>
+        </Button.Group>
       </Menu.Item>
     </Menu>
   );

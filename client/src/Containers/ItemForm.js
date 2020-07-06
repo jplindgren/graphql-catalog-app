@@ -7,6 +7,8 @@ import { GET_TAGS } from '../graphql/queries/tagQueries';
 import { GET_CATALOG as CATALOG, GET_ITEMS as ITEMS } from '../graphql/queries/itemQueries';
 import CREATE_ITEM from '../graphql/mutations/itemMutations';
 import queryInput from '../graphql/queries/helpers';
+import { mutateSafe } from '../Components/hooks/useMutationSafe';
+import ErrorBoundaryContext from '../Contexts/ErrorBoundaryProvider';
 
 class ItemForm extends React.Component {
   constructor() {
@@ -14,10 +16,10 @@ class ItemForm extends React.Component {
 
     this.state = {
       item: {
-        name: null,
-        description: null,
-        link: null,
-        preview: null,
+        name: '',
+        description: '',
+        link: '',
+        preview: undefined,
         rating: 0,
         favorite: false,
         tags: [],
@@ -36,7 +38,7 @@ class ItemForm extends React.Component {
   handleOnChange = (e, { name, value }) => this.setItemFieldState({ name, value });
 
   handleKeyDown = (e) => {
-    if (e.keyCode === 27) this.setItemFieldState({ name: e.target.name, value: null });
+    if (e.keyCode === 27) this.setItemFieldState({ name: e.target.name, value: '' });
   };
 
   handleRate = (e, { rating }) => this.setItemFieldState({ name: 'rating', value: rating });
@@ -59,11 +61,21 @@ class ItemForm extends React.Component {
       async () => {
         const { item } = this.state;
         const { history, mutate } = this.props;
-        const response = await mutate({
-          variables: item,
-          refetchQueries: ({ data: { ok } }) => this.refreshQueries(ok),
+        const { graphQLErrors, authError, networkError, data } = await mutateSafe(() => {
+          return mutate({
+            variables: { ...item },
+            refetchQueries: ({ data: { ok } }) => this.refreshQueries(ok),
+          });
         });
-        const { ok, errors } = response.data.createItem;
+
+        if (authError || networkError || graphQLErrors) {
+          this.context(authError);
+          this.context(networkError);
+          this.context(graphQLErrors);
+          return;
+        }
+
+        const { ok, errors } = data.createItem;
 
         if (ok) history.push('/');
         else errors.forEach(({ path, message }) => this.setState({ [`${path}Error`]: message }));
@@ -118,7 +130,7 @@ class ItemForm extends React.Component {
           iconPosition="left"
           required
           placeholder="Link"
-          type="url"
+          type="text"
           fluid
           error={linkError}
           id="link"
@@ -137,7 +149,7 @@ class ItemForm extends React.Component {
           fluid
           id="preview"
           name="preview"
-          value={item.preview}
+          value={item.preview || ''}
           onChange={this.handleOnChange}
           onKeyDown={this.handleKeyDown}
         />
@@ -186,4 +198,6 @@ class ItemForm extends React.Component {
     );
   }
 }
+ItemForm.contextType = ErrorBoundaryContext;
+
 export default withRouter(compose(graphql(GET_TAGS), graphql(CREATE_ITEM))(ItemForm));

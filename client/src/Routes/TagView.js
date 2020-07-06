@@ -3,11 +3,13 @@ import { Container, Header, Icon, Divider, Grid, Rail } from 'semantic-ui-react'
 import TagList from '../Containers/TagList';
 import TagForm from '../Containers/TagForm';
 import BackHome from '../Components/BackHome';
+import Logout from '../Components/Logout';
 import SidebarMenu from '../Components/SidebarMenu';
 
 const TagView = () => (
   <Container fluid>
     <BackHome />
+    <Logout />
     <Header as="h2" icon textAlign="center">
       <Icon name="tag" circular />
       <Header.Content>Manage Tags</Header.Content>
